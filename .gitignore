@@ -53,3 +53,6 @@ npm-shrinkwrap.json
 __screenshots__/
 
 vite.config.*.timestamp*
+/.ai/mcp/mcp.json
+/.aiassistant/rules/guidelines.md
+/AGENTS.md
