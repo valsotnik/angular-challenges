@@ -1,39 +1,25 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-} from '@angular/core';
-import { StudentStore } from '../../data-access/student.store';
-import { TeacherStore } from '../../data-access/teacher.store';
-import { CardType } from '../../model/card.model';
+import { NgOptimizedImage } from '@angular/common';
+import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 
 @Component({
   selector: 'app-list-item',
   template: `
-    <div class="flex justify-between border border-gray-300 px-2 py-1">
-      {{ name() }}
-      <button (click)="delete(id())">
-        <img class="h-5" src="assets/svg/trash.svg" alt="trash" />
-      </button>
-    </div>
+    <ng-content />
+    <button (click)="deleteItem.emit()">
+      <img
+        class="h-5"
+        ngSrc="assets/svg/trash.svg"
+        width="20"
+        height="20"
+        alt="trash" />
+    </button>
   `,
+  host: {
+    class: 'flex justify-between border border-gray-300 px-2 py-1',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgOptimizedImage],
 })
 export class ListItemComponent {
-  private teacherStore = inject(TeacherStore);
-  private studentStore = inject(StudentStore);
-
-  readonly id = input.required<number>();
-  readonly name = input.required<string>();
-  readonly type = input.required<CardType>();
-
-  delete(id: number) {
-    const type = this.type();
-    if (type === CardType.TEACHER) {
-      this.teacherStore.deleteOne(id);
-    } else if (type === CardType.STUDENT) {
-      this.studentStore.deleteOne(id);
-    }
-  }
+  readonly deleteItem = output<void>();
 }
