@@ -6,6 +6,7 @@ import {
   input,
   TemplateRef,
 } from '@angular/core';
+import { ListDirective } from './directives/list.directive';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -13,10 +14,11 @@ import {
   template: `
     @for (item of list(); track $index) {
       <ng-container
-        *ngTemplateOutlet="
-          listTemplateRef() || emptyRef;
-          context: { $implicit: item, appList: item, index: $index }
-        " />
+        [ngTemplateOutlet]="listTemplateRef() || emptyRef"
+        [ngTemplateOutletContext]="{
+          $implicit: item,
+          index: $index,
+        }" />
     }
 
     <ng-template #emptyRef>No Template</ng-template>
@@ -24,8 +26,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
 })
-export class ListComponent<TItem extends object> {
-  list = input.required<TItem[]>();
+export class ListComponent<T> {
+  list = input.required<T[]>();
 
-  listTemplateRef = contentChild('listRef', { read: TemplateRef });
+  listTemplateRef = contentChild(ListDirective, { read: TemplateRef });
 }
