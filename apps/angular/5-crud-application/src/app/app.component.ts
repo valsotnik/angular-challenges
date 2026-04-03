@@ -35,6 +35,14 @@ export class AppComponent {
     });
   }
 
+  protected deleteTodo(id: number) {
+    this.todoApi.deleteTodo(id).subscribe(() => {
+      this.todos.update((todos) =>
+        todos.filter((currentTodo) => currentTodo.id !== id),
+      );
+    });
+  }
+
   private loadTodos(): void {
     this.todoApi.getTodos().subscribe((todos) => {
       this.todos.set(todos);

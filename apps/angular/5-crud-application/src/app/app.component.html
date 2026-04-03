@@ -11,9 +11,14 @@
           </span>
         </div>
 
-        <button type="button" (click)="updateTodo(todo)">
-          Update
-        </button>
+        <div class="actions">
+          <button type="button" (click)="updateTodo(todo)">
+            Update
+          </button>
+          <button type="button" (click)="deleteTodo(todo.id)">
+            Delete
+          </button>
+        </div>
       </li>
     }
   </ul>
