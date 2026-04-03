@@ -1,49 +1,43 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { randText } from '@ngneat/falso';
+import { TodoApiService } from './todo/todo-api.service';
+import { Todo } from './todo/todo.types';
 
 @Component({
   imports: [],
   selector: 'app-root',
-  template: `
-    @for (todo of todos; track todo.id) {
-      {{ todo.title }}
-      <button (click)="update(todo)">Update</button>
-    }
-  `,
-  styles: [],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
-  private http = inject(HttpClient);
+export class AppComponent {
+  private readonly todoApi = inject(TodoApiService);
 
-  todos!: any[];
+  protected readonly todos = signal<Todo[]>([]);
 
-  ngOnInit(): void {
-    this.http
-      .get<any[]>('https://jsonplaceholder.typicode.com/todos')
-      .subscribe((todos) => {
-        this.todos = todos;
-      });
+  constructor() {
+    this.loadTodos();
   }
 
-  update(todo: any) {
-    this.http
-      .put<any>(
-        `https://jsonplaceholder.typicode.com/todos/${todo.id}`,
-        JSON.stringify({
-          todo: todo.id,
-          title: randText(),
-          body: todo.body,
-          userId: todo.userId,
-        }),
-        {
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-        },
-      )
-      .subscribe((todoUpdated: any) => {
-        this.todos[todoUpdated.id - 1] = todoUpdated;
+  protected updateTodo(todo: Todo): void {
+    const payload = { title: randText(), id: todo.id };
+    this.todoApi.updateTodo(payload).subscribe((updatedTodo) => {
+      this.todos.update((todos) => {
+        return todos.map((currentTodo) =>
+          currentTodo.id === updatedTodo.id ? updatedTodo : currentTodo,
+        );
       });
+    });
+  }
+
+  private loadTodos(): void {
+    this.todoApi.getTodos().subscribe((todos) => {
+      this.todos.set(todos);
+    });
   }
 }
