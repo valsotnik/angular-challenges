@@ -4,12 +4,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { randText } from '@ngneat/falso';
+import { LoadingService } from './interceptors/loading.service';
 import { TodoApiService } from './todo/todo-api.service';
 import { Todo } from './todo/todo.types';
 
 @Component({
-  imports: [],
+  imports: [MatProgressSpinnerModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -17,8 +19,10 @@ import { Todo } from './todo/todo.types';
 })
 export class AppComponent {
   private readonly todoApi = inject(TodoApiService);
+  private readonly loadingService = inject(LoadingService);
 
   protected readonly todos = signal<Todo[]>([]);
+  protected readonly isLoading = this.loadingService.isLoading;
 
   constructor() {
     this.loadTodos();

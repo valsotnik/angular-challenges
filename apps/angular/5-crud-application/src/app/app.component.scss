@@ -41,3 +41,9 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.loading-overlay {
+  display: grid;
+  place-items: center;
+  min-height: 6rem;
+}

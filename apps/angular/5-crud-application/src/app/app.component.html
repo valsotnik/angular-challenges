@@ -1,6 +1,12 @@
 <section class="page">
   <h1>Todos</h1>
 
+  @if (isLoading()) {
+    <div class="loading-overlay" aria-live="polite" aria-busy="true">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
   <ul class="todo-list">
     @for (todo of todos(); track todo.id) {
       <li class="todo-item">
