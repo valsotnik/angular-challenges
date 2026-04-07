@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { UserStore } from './user.store';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-information',
@@ -15,8 +14,4 @@ import { UserStore } from './user.store';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InformationComponent {
-  private readonly userStore = inject(UserStore);
-
-  user$ = this.userStore.user$;
-}
+export class InformationComponent {}
