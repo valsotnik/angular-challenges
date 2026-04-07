@@ -1,0 +1,21 @@
+<li class="todo-item">
+  <div class="todo-content">
+    <span class="todo-title">{{ todo().title }}</span>
+    <span class="todo-status">
+            {{ todo().completed ? 'Completed' : 'Pending' }}
+          </span>
+  </div>
+
+  <div class="actions">
+    <button type="button" (click)="update()" [disabled]="processing()">
+      Update
+    </button>
+    <button type="button" (click)="delete()" [disabled]="processing()">
+      Delete
+    </button>
+
+    @if (processing()) {
+      <span aria-live="polite">Processing</span>
+    }
+  </div>
+</li>

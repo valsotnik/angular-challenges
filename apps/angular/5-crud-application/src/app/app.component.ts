@@ -1,49 +1,27 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
-import { randText } from '@ngneat/falso';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TodoItemComponent } from './todo/todo-item/todo-item.component';
+import { TodoStore } from './todo/todo.store';
+import { Todo } from './todo/todo.types';
 
 @Component({
-  imports: [],
+  imports: [MatProgressSpinnerModule, TodoItemComponent],
   selector: 'app-root',
-  template: `
-    @for (todo of todos; track todo.id) {
-      {{ todo.title }}
-      <button (click)="update(todo)">Update</button>
-    }
-  `,
-  styles: [],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
-  private http = inject(HttpClient);
+export class AppComponent {
+  protected readonly store = inject(TodoStore);
 
-  todos!: any[];
+  protected readonly todos = signal<Todo[]>([]);
 
-  ngOnInit(): void {
-    this.http
-      .get<any[]>('https://jsonplaceholder.typicode.com/todos')
-      .subscribe((todos) => {
-        this.todos = todos;
-      });
-  }
-
-  update(todo: any) {
-    this.http
-      .put<any>(
-        `https://jsonplaceholder.typicode.com/todos/${todo.id}`,
-        JSON.stringify({
-          todo: todo.id,
-          title: randText(),
-          body: todo.body,
-          userId: todo.userId,
-        }),
-        {
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-        },
-      )
-      .subscribe((todoUpdated: any) => {
-        this.todos[todoUpdated.id - 1] = todoUpdated;
-      });
+  constructor() {
+    this.store.loadTodos();
   }
 }
