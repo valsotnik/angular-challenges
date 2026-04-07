@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-top',
@@ -13,5 +13,6 @@ import { Component } from '@angular/core';
       height: 50%;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopComponent {}
