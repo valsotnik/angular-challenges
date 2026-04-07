@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FakeServiceService } from './fake.service';
@@ -38,19 +38,17 @@ export class NavigationComponent {
 @Component({
   imports: [NavigationComponent],
   template: `
-    @if (info() !== null) {
-      <app-nav [menus]="getMenu(info()!)" />
-    } @else {
-      <app-nav [menus]="getMenu('')" />
-    }
+    <app-nav [menus]="menus()" />
   `,
   host: {},
 })
 export class MainNavigationComponent {
   private fakeBackend = inject(FakeServiceService);
 
-  readonly info = toSignal(this.fakeBackend.getInfoFromBackend(), {
-    initialValue: null,
+  readonly info = toSignal(this.fakeBackend.getInfoFromBackend());
+  readonly menus = computed(() => {
+    const infos = this.info();
+    return infos ? this.getMenu(infos) : [];
   });
 
   getMenu(prop: string) {
