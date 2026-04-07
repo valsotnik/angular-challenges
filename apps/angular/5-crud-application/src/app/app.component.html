@@ -1,31 +1,24 @@
 <section class="page">
   <h1>Todos</h1>
 
-  @if (isLoading()) {
+  @if (store.loading()) {
     <div class="loading-overlay" aria-live="polite" aria-busy="true">
       <mat-spinner diameter="48"></mat-spinner>
     </div>
   }
 
-  <ul class="todo-list">
-    @for (todo of todos(); track todo.id) {
-      <li class="todo-item">
-        <div class="todo-content">
-          <span class="todo-title">{{ todo.title }}</span>
-          <span class="todo-status">
-            {{ todo.completed ? 'Completed' : 'Pending' }}
-          </span>
-        </div>
+  @if (store.error(); as error) {
+    <p role="alert">{{ error }}</p>
+  }
 
-        <div class="actions">
-          <button type="button" (click)="updateTodo(todo)">
-            Update
-          </button>
-          <button type="button" (click)="deleteTodo(todo.id)">
-            Delete
-          </button>
-        </div>
-      </li>
+  <ul class="todo-list">
+    @for (todo of store.todos(); track todo.id) {
+      <app-todo-item
+        [todo]="todo"
+        [processing]="store.isProcessing(todo.id)"
+        (updateClicked)="store.updateTodo($event)"
+        (deleteClicked)="store.deleteTodo($event.id)"
+      />
     }
   </ul>
 </section>
